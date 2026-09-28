@@ -75,7 +75,12 @@ def prepare_data(df):
 
 def calculate_metrics(y_true, y_pred, y_score):
     cm = confusion_matrix(y_true, y_pred)
-    specificity = cm[0, 0] / (cm[0, 0] + cm[0, 1]) if cm.shape == (2, 2) and (cm[0, 0] + cm[0, 1]) > 0 else 0.0
+    if cm.shape == (2, 2):
+        tn, fp, fn, tp = cm.ravel()
+    else:
+        tn, fp, fn, tp = 0, 0, 0, 0
+        
+    specificity = tn / (tn + fp) if (tn + fp) > 0 else 0.0
     try: auc = roc_auc_score(y_true, y_score)
     except: auc = 0.0
 
@@ -85,7 +90,11 @@ def calculate_metrics(y_true, y_pred, y_score):
         "specificity": specificity,
         "precision": precision_score(y_true, y_pred, zero_division=0),
         "f1": f1_score(y_true, y_pred, zero_division=0),
-        "auc": auc
+        "auc": auc,
+        "tn": tn,
+        "fp": fp,
+        "fn": fn,
+        "tp": tp
     }
 
 # ================================================================
@@ -190,7 +199,12 @@ def main():
         "Model": "Classical SVM",
         "Accuracy": c_results["accuracy"].mean(),
         "Sensitivity": c_results["sensitivity"].mean(),
-        "Precision": c_results["precision"].mean()
+        "Precision": c_results["precision"].mean(),
+        "Runtime": c_results["runtime"].mean(),
+        "TN": c_results["tn"].sum(),
+        "FP": c_results["fp"].sum(),
+        "FN": c_results["fn"].sum(),
+        "TP": c_results["tp"].sum()
     })
     
     summary.append({
@@ -198,7 +212,12 @@ def main():
         "Model": "Quantum SVM",
         "Accuracy": q_results["accuracy"].mean(),
         "Sensitivity": q_results["sensitivity"].mean(),
-        "Precision": q_results["precision"].mean()
+        "Precision": q_results["precision"].mean(),
+        "Runtime": q_results["runtime"].mean(),
+        "TN": q_results["tn"].sum(),
+        "FP": q_results["fp"].sum(),
+        "FN": q_results["fn"].sum(),
+        "TP": q_results["tp"].sum()
     })
     
     summary_df = pd.DataFrame(summary)

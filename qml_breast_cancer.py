@@ -83,8 +83,11 @@ def calculate_metrics(y_true, y_pred, y_score):
     if cm.shape == (2, 2):
         tn = cm[0, 0]
         fp = cm[0, 1]
+        fn = cm[1, 0]
+        tp = cm[1, 1]
         specificity = tn / (tn + fp) if (tn + fp) > 0 else 0.0
     else:
+        tn, fp, fn, tp = 0, 0, 0, 0
         specificity = 0.0
 
     try:
@@ -98,7 +101,11 @@ def calculate_metrics(y_true, y_pred, y_score):
         "specificity": specificity,
         "precision": precision,
         "f1": f1,
-        "auc": auc
+        "auc": auc,
+        "tn": tn,
+        "fp": fp,
+        "fn": fn,
+        "tp": tp
     }
 
 # ================================================================
@@ -223,7 +230,12 @@ def main():
             "Model": "Classical SVM",
             "Accuracy": c_results["accuracy"].mean(),
             "Sensitivity": c_results["sensitivity"].mean(),
-            "Precision": c_results["precision"].mean()
+            "Precision": c_results["precision"].mean(),
+            "Runtime": c_results["runtime"].mean(),
+            "TN": c_results["tn"].sum(),
+            "FP": c_results["fp"].sum(),
+            "FN": c_results["fn"].sum(),
+            "TP": c_results["tp"].sum()
         })
         
         summary.append({
@@ -231,7 +243,12 @@ def main():
             "Model": "Quantum SVM",
             "Accuracy": q_results["accuracy"].mean(),
             "Sensitivity": q_results["sensitivity"].mean(),
-            "Precision": q_results["precision"].mean()
+            "Precision": q_results["precision"].mean(),
+            "Runtime": q_results["runtime"].mean(),
+            "TN": q_results["tn"].sum(),
+            "FP": q_results["fp"].sum(),
+            "FN": q_results["fn"].sum(),
+            "TP": q_results["tp"].sum()
         })
         
     print("\n" + "="*70)
