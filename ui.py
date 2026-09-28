@@ -106,8 +106,11 @@ if page == "Performance Dashboard":
                 else:
                     styled_df = df_filtered[display_cols].copy()
                     for col in ['Accuracy', 'Precision', 'Sensitivity', 'Specificity', 'F1-score', 'ROC-AUC']:
-                        styled_df[col] = (styled_df[col] * 100).apply(lambda x: f"{x:.1f}%")
-                    styled_df['Runtime'] = styled_df['Runtime'].apply(lambda x: f"{x:.3f} s")
+                        styled_df[col] = pd.to_numeric(styled_df[col], errors='coerce')
+                        styled_df[col] = (styled_df[col] * 100).apply(lambda x: f"{x:.1f}%" if pd.notnull(x) else "N/A")
+                    
+                    styled_df['Runtime'] = pd.to_numeric(styled_df['Runtime'], errors='coerce')
+                    styled_df['Runtime'] = styled_df['Runtime'].apply(lambda x: f"{x:.3f} s" if pd.notnull(x) else "N/A")
                     
                     # Apply styling to highlight QSVM
                     def highlight_qsvm(row):
