@@ -33,7 +33,10 @@ st.write("A clinical evaluation dashboard comparing Classical Algorithms with ne
 st.write("---")
 
 st.sidebar.title("Clinical Dashboard")
-page = st.sidebar.radio("", ["Performance Dashboard", "Train New Data", "Explainability (SHAP)", "Clinical Explanation"])
+if "sidebar_radio" not in st.session_state:
+    st.session_state.sidebar_radio = "Performance Dashboard"
+
+page = st.sidebar.radio("", ["Performance Dashboard", "Train New Data", "Explainability (SHAP)", "Clinical Explanation"], key="sidebar_radio")
 
 @st.cache_data
 def load_results():
@@ -200,9 +203,8 @@ elif page == "Train New Data":
                     stream_output(process, output_placeholder)
                     process.wait()
                     if process.returncode == 0:
-                        st.success("Training Complete! Go to the Performance Dashboard to view the results.")
-                        time.sleep(2)
                         load_results.clear()
+                        st.session_state.sidebar_radio = "Performance Dashboard"
                         st.rerun()
                     else: st.error("Error running script.")
                 except Exception as e: st.error(f"Error: {e}")
@@ -224,9 +226,8 @@ elif page == "Train New Data":
                     stream_output(process, output_placeholder)
                     process.wait()
                     if process.returncode == 0:
-                        st.success("Training Complete! Go to the Performance Dashboard to view the results.")
-                        time.sleep(2)
                         load_results.clear()
+                        st.session_state.sidebar_radio = "Performance Dashboard"
                         st.rerun()
                     else: st.error("Error running script.")
                 except Exception as e: st.error(f"Error: {e}")
@@ -255,9 +256,8 @@ elif page == "Train New Data":
                         stream_output(process, output_placeholder)
                         process.wait()
                         if process.returncode == 0:
-                            st.success("Training Complete! Go to the Performance Dashboard to view the results.")
-                            time.sleep(2)
                             load_results.clear()
+                            st.session_state.sidebar_radio = "Performance Dashboard"
                             st.rerun()
                         else: st.error("Error processing dataset.")
                     except Exception as e: st.error(f"Error: {e}")
