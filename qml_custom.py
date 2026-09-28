@@ -8,6 +8,8 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
     accuracy_score,
     recall_score,
@@ -22,12 +24,9 @@ from qiskit_machine_learning.algorithms import QSVC
 
 warnings.filterwarnings("ignore")
 
-# ================================================================
-# CONFIGURATION
-# ================================================================
 RANDOM_STATE = 42
 N_FOLDS = 3 
-N_QUBITS = 4 # Fixed to 4 for fast simulation
+N_QUBITS = 4 
 
 def calculate_metrics(y_true, y_pred, y_score):
     cm = confusion_matrix(y_true, y_pred)
@@ -54,8 +53,8 @@ def calculate_metrics(y_true, y_pred, y_score):
         "tp": tp
     }
 
-def run_classical_svm(X, y):
-    print("\n--- CLASSICAL SVM ---")
+def run_classical_model(model, name, X, y):
+    print(f"\n--- {name.upper()} ---")
     cv = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=RANDOM_STATE)
     fold_results = []
 
@@ -70,14 +69,11 @@ def run_classical_svm(X, y):
         X_train_scaled = scaler.fit_transform(X_train_sel)
         X_test_scaled = scaler.transform(X_test_sel)
 
-        model = SVC(kernel="rbf", probability=True, random_state=RANDOM_STATE)
         model.fit(X_train_scaled, y[train_index])
         
         predictions = model.predict(X_test_scaled)
-        try:
-            probabilities = model.predict_proba(X_test_scaled)[:, 1]
-        except:
-            probabilities = np.zeros(len(predictions))
+        try: probabilities = model.predict_proba(X_test_scaled)[:, 1]
+        except: probabilities = np.zeros(len(predictions))
 
         metrics = calculate_metrics(y[test_index], predictions, probabilities)
         fold_time = time.perf_counter() - fold_start
@@ -89,8 +85,6 @@ def run_classical_svm(X, y):
 
 def run_qsvm(X, y):
     print("\n--- QUANTUM SVM ---")
-    
-    # We must use exactly the number of PCA components as qubits
     actual_qubits = min(N_QUBITS, X.shape[1])
     feature_map = PauliFeatureMap(feature_dimension=actual_qubits, reps=1, paulis=['Z', 'YY'], entanglement="linear")
     quantum_kernel = FidelityQuantumKernel(feature_map=feature_map)
@@ -132,26 +126,20 @@ def main():
 
     print(f"Loading custom dataset: {args.data}")
     df = pd.read_csv(args.data)
-    
-    # Basic cleaning
     df = df.dropna()
     
     if args.target not in df.columns:
         print(f"Error: Target column '{args.target}' not found in dataset.")
         return
 
-    # Convert target to integers if it's categorical
     if df[args.target].dtype == 'object':
         df[args.target] = df[args.target].astype('category').cat.codes
 
     y = df[args.target].to_numpy(dtype=int)
     X_df = df.drop(columns=[args.target])
-    
-    # Convert all remaining features to numeric, drop non-numeric
     X_df = X_df.select_dtypes(include=[np.number])
     X = X_df.to_numpy(dtype=float)
 
-    # Downsample if too large for Quantum Simulator (keep it fast for UI)
     if len(X) > 100:
         print(f"Dataset has {len(X)} rows. Downsampling to 100 for fast Quantum simulation...")
         rng = np.random.default_rng(RANDOM_STATE)
@@ -159,34 +147,47 @@ def main():
         X = X[idx]
         y = y[idx]
 
-    c_results = run_classical_svm(X, y)
-    q_results = run_qsvm(X, y)
+    models = {
+        "Logistic Regression": LogisticRegression(random_state=RANDOM_STATE),
+        "Random Forest": RandomForestClassifier(random_state=RANDOM_STATE),
+        "Classical SVM": SVC(kernel="rbf", probability=True, random_state=RANDOM_STATE)
+    }
 
     summary = []
-    summary.append({
-        "Dataset": args.name,
-        "Model": "Classical SVM",
-        "Accuracy": c_results["accuracy"].mean(),
-        "Sensitivity": c_results["sensitivity"].mean(),
-        "Precision": c_results["precision"].mean(),
-        "Runtime": c_results["runtime"].mean(),
-        "TN": c_results["tn"].sum(),
-        "FP": c_results["fp"].sum(),
-        "FN": c_results["fn"].sum(),
-        "TP": c_results["tp"].sum()
-    })
     
+    for name, model in models.items():
+        res = run_classical_model(model, name, X, y)
+        summary.append({
+            "Dataset": args.name,
+            "Model": name,
+            "Accuracy": res["accuracy"].mean(),
+            "Sensitivity": res["sensitivity"].mean(),
+            "Specificity": res["specificity"].mean(),
+            "Precision": res["precision"].mean(),
+            "F1-score": res["f1"].mean(),
+            "ROC-AUC": res["auc"].mean(),
+            "Runtime": res["runtime"].mean(),
+            "TN": res["tn"].sum(),
+            "FP": res["fp"].sum(),
+            "FN": res["fn"].sum(),
+            "TP": res["tp"].sum()
+        })
+
+    q_res = run_qsvm(X, y)
     summary.append({
         "Dataset": args.name,
         "Model": "Quantum SVM",
-        "Accuracy": q_results["accuracy"].mean(),
-        "Sensitivity": q_results["sensitivity"].mean(),
-        "Precision": q_results["precision"].mean(),
-        "Runtime": q_results["runtime"].mean(),
-        "TN": q_results["tn"].sum(),
-        "FP": q_results["fp"].sum(),
-        "FN": q_results["fn"].sum(),
-        "TP": q_results["tp"].sum()
+        "Accuracy": q_res["accuracy"].mean(),
+        "Sensitivity": q_res["sensitivity"].mean(),
+        "Specificity": q_res["specificity"].mean(),
+        "Precision": q_res["precision"].mean(),
+        "F1-score": q_res["f1"].mean(),
+        "ROC-AUC": q_res["auc"].mean(),
+        "Runtime": q_res["runtime"].mean(),
+        "TN": q_res["tn"].sum(),
+        "FP": q_res["fp"].sum(),
+        "FN": q_res["fn"].sum(),
+        "TP": q_res["tp"].sum()
     })
     
     summary_df = pd.DataFrame(summary)
