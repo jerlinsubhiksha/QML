@@ -173,9 +173,7 @@ elif page == "Train New Data":
         for line in process.stdout:
             output_log += line
             # Styled high-contrast terminal box for visibility
-            html_log = f"""<div style='background-color: #0F172A; color: #38BDF8; font-family: "Courier New", Courier, monospace; 
-                           padding: 15px; border-radius: 5px; height: 350px; overflow-y: scroll; white-space: pre-wrap; 
-                           box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); font-size: 14px;'>{output_log}</div>"""
+            html_log = f"""<pre style='background-color: #000000 !important; padding: 15px; border-radius: 5px; height: 350px; overflow-y: scroll; white-space: pre-wrap; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);'><span style='color: #00FF00 !important; font-family: "Courier New", Courier, monospace; font-size: 14px; font-weight: bold;'>{output_log}</span></pre>"""
             placeholder.markdown(html_log, unsafe_allow_html=True)
     
     with col1:
