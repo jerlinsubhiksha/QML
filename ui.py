@@ -33,10 +33,16 @@ st.write("A clinical evaluation dashboard comparing Classical Algorithms with ne
 st.write("---")
 
 st.sidebar.title("Clinical Dashboard")
-if "sidebar_radio" not in st.session_state:
-    st.session_state.sidebar_radio = "Performance Dashboard"
+if "current_page" not in st.session_state:
+    st.session_state.current_page = "Performance Dashboard"
 
-page = st.sidebar.radio("", ["Performance Dashboard", "Train New Data", "Explainability (SHAP)", "Clinical Explanation"], key="sidebar_radio")
+def on_page_change():
+    st.session_state.current_page = st.session_state.radio_key
+
+options = ["Performance Dashboard", "Train New Data", "Explainability (SHAP)", "Clinical Explanation"]
+idx = options.index(st.session_state.current_page)
+
+page = st.sidebar.radio("", options, index=idx, key="radio_key", on_change=on_page_change)
 
 @st.cache_data
 def load_results():
@@ -204,7 +210,7 @@ elif page == "Train New Data":
                     process.wait()
                     if process.returncode == 0:
                         load_results.clear()
-                        st.session_state.sidebar_radio = "Performance Dashboard"
+                        st.session_state.current_page = "Performance Dashboard"
                         st.rerun()
                     else: st.error("Error running script.")
                 except Exception as e: st.error(f"Error: {e}")
@@ -227,7 +233,7 @@ elif page == "Train New Data":
                     process.wait()
                     if process.returncode == 0:
                         load_results.clear()
-                        st.session_state.sidebar_radio = "Performance Dashboard"
+                        st.session_state.current_page = "Performance Dashboard"
                         st.rerun()
                     else: st.error("Error running script.")
                 except Exception as e: st.error(f"Error: {e}")
@@ -257,7 +263,7 @@ elif page == "Train New Data":
                         process.wait()
                         if process.returncode == 0:
                             load_results.clear()
-                            st.session_state.sidebar_radio = "Performance Dashboard"
+                            st.session_state.current_page = "Performance Dashboard"
                             st.rerun()
                         else: st.error("Error processing dataset.")
                     except Exception as e: st.error(f"Error: {e}")
