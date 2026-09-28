@@ -43,13 +43,13 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1><span class='teal-text'>⚕️ Quantum AI</span> Medical Diagnostics</h1>", unsafe_allow_html=True)
+st.markdown("<h1><span class='teal-text'><img src='https://img.icons8.com/ios/50/0D9488/artificial-intelligence.png' width='40' style='vertical-align: middle;'> Quantum AI</span> Medical Diagnostics</h1>", unsafe_allow_html=True)
 st.write("A clinical evaluation dashboard comparing Classical Support Vector Machines with next-generation Quantum Machine Learning.")
 st.write("---")
 
 st.sidebar.image("https://cdn-icons-png.flaticon.com/512/2966/2966327.png", width=80)
 st.sidebar.title("Clinical Dashboard")
-page = st.sidebar.radio("", ["📊 Performance Dashboard", "⚙️ Train New Data", "🔍 Explainability (SHAP)", "🧠 Clinical Explanation"])
+page = st.sidebar.radio("", ["Performance Dashboard", "Train New Data", "Explainability (SHAP)", "Clinical Explanation"])
 
 @st.cache_data
 def load_results():
@@ -63,9 +63,9 @@ results_df = load_results()
 # ==========================================
 # PAGE 1: DASHBOARD
 # ==========================================
-if page == "📊 Performance Dashboard":
+if page == "Performance Dashboard":
     if results_df is None:
-        st.warning("⚠️ No clinical data processed yet. Please go to 'Train New Data' to process a dataset.")
+        st.warning("No clinical data processed yet. Please go to 'Train New Data' to process a dataset.")
     else:
         datasets = results_df['Dataset'].unique()
         st.markdown("### Choose Dataset to Review:")
@@ -85,7 +85,7 @@ if page == "📊 Performance Dashboard":
                     q_runtime = q_data.get('Runtime', 0)
                     
                     with col1:
-                        st.markdown("<h3 style='text-align: center; color: #1E293B;'>💻 Classical SVM (Standard)</h3>", unsafe_allow_html=True)
+                        st.markdown("<h3 style='text-align: center; color: #1E293B;'><img src='https://img.icons8.com/ios/50/1E293B/microchip.png' width='30' style='vertical-align: middle;'> Classical SVM (Standard)</h3>", unsafe_allow_html=True)
                         st.markdown(f"""
                         <div class="metric-card">
                             <div class="metric-label">Overall Accuracy</div>
@@ -109,7 +109,7 @@ if page == "📊 Performance Dashboard":
                             st.plotly_chart(fig_c, use_container_width=True)
                         
                     with col2:
-                        st.markdown("<h3 style='text-align: center; color: #1E293B;'>⚛️ Quantum SVM (Next-Gen)</h3>", unsafe_allow_html=True)
+                        st.markdown("<h3 style='text-align: center; color: #1E293B;'><img src='https://img.icons8.com/ios/50/1E293B/physics.png' width='30' style='vertical-align: middle;'> Quantum SVM (Next-Gen)</h3>", unsafe_allow_html=True)
                         st.markdown(f"""
                         <div class="metric-card" style="border-top-color: #0F172A;">
                             <div class="metric-label">Overall Accuracy</div>
@@ -133,7 +133,7 @@ if page == "📊 Performance Dashboard":
                             st.plotly_chart(fig_q, use_container_width=True)
 
                     st.write("---")
-                    st.markdown("### 📈 Direct Visual Comparison")
+                    st.markdown("### <img src='https://img.icons8.com/ios/50/1E293B/bar-chart.png' width='30' style='vertical-align: middle;'> Direct Visual Comparison")
                     
                     fig = go.Figure()
                     fig.add_trace(go.Bar(x=['Accuracy', 'Sensitivity', 'Precision'],
@@ -152,7 +152,7 @@ if page == "📊 Performance Dashboard":
 # ==========================================
 # PAGE 2: TRAIN MODELS 
 # ==========================================
-elif page == "⚙️ Train New Data":
+elif page == "Train New Data":
     st.header("Process Medical Datasets Live")
     st.write("Select a clinical dataset below to run through both the standard classical algorithm and the quantum algorithm.")
     st.write("<br>", unsafe_allow_html=True)
@@ -167,7 +167,7 @@ elif page == "⚙️ Train New Data":
         </div>
         """, unsafe_allow_html=True)
         st.write("")
-        if st.button("Train Fever Dataset 🚀", use_container_width=True, type="primary"):
+        if st.button("Train Fever Dataset", use_container_width=True, type="primary"):
             with st.spinner('Initializing Quantum simulation for Fever dataset...'):
                 try:
                     output_placeholder = st.empty()
@@ -178,8 +178,8 @@ elif page == "⚙️ Train New Data":
                         output_placeholder.code(output_log, language="shell")
                     process.wait()
                     if process.returncode == 0:
-                        st.balloons()
-                        st.success("✅ Training Complete! Go to the Performance Dashboard to view the results.")
+                        pass
+                        st.success("Training Complete! Go to the Performance Dashboard to view the results.")
                         time.sleep(2)
                         load_results.clear()
                         st.rerun()
@@ -196,7 +196,7 @@ elif page == "⚙️ Train New Data":
         </div>
         """, unsafe_allow_html=True)
         st.write("")
-        if st.button("Train Breast Cancer Dataset 🚀", use_container_width=True, type="primary"):
+        if st.button("Train Breast Cancer Dataset", use_container_width=True, type="primary"):
             with st.spinner('Simulating complex Quantum entanglement...'):
                 try:
                     output_placeholder = st.empty()
@@ -207,8 +207,8 @@ elif page == "⚙️ Train New Data":
                         output_placeholder.code(output_log, language="shell")
                     process.wait()
                     if process.returncode == 0:
-                        st.balloons()
-                        st.success("✅ Training Complete! Go to the Performance Dashboard to view the results.")
+                        pass
+                        st.success("Training Complete! Go to the Performance Dashboard to view the results.")
                         time.sleep(2)
                         load_results.clear()
                         st.rerun()
@@ -219,7 +219,7 @@ elif page == "⚙️ Train New Data":
 # ==========================================
 # PAGE 3: EXPLAINABILITY (SHAP)
 # ==========================================
-elif page == "🔍 Explainability (SHAP)":
+elif page == "Explainability (SHAP)":
     st.header("Feature Importance & SHAP Analysis")
     st.markdown("Understanding *why* an AI makes a medical decision is just as important as the accuracy. This module utilizes **SHAP (SHapley Additive exPlanations)** methodologies to demystify the algorithm's predictions.")
     
@@ -241,13 +241,13 @@ elif page == "🔍 Explainability (SHAP)":
     fig.update_layout(yaxis={'categoryorder':'total ascending'}, height=500)
     st.plotly_chart(fig, use_container_width=True)
     
-    st.info("💡 **Clinical Note:** In the breast cancer diagnostic pipeline, dimensional features like 'Worst Perimeter' and 'Mean Concave Points' possess the highest Shapley additive impact. The Quantum algorithm encodes these highest-weight features directly into physical qubit phases via PCA before entanglement.")
+    st.info("**Clinical Note:** In the breast cancer diagnostic pipeline, dimensional features like 'Worst Perimeter' and 'Mean Concave Points' possess the highest Shapley additive impact. The Quantum algorithm encodes these highest-weight features directly into physical qubit phases via PCA before entanglement.")
 
 
 # ==========================================
 # PAGE 4: HOW IT WORKS (CLINICAL EXPLANATION)
 # ==========================================
-elif page == "🧠 Clinical Explanation":
+elif page == "Clinical Explanation":
     st.header("How the AI Evaluates Patients")
     st.write("This dashboard is designed to help clinicians understand the fundamental differences between the classical AI they use today, and the Quantum AI of tomorrow.")
     
@@ -256,7 +256,7 @@ elif page == "🧠 Clinical Explanation":
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("""
-        ### 💻 The Classical Approach (Standard AI)
+        ### <img src='https://img.icons8.com/ios/50/1E293B/microchip.png' width='30' style='vertical-align: middle;'> The Classical Approach (Standard AI)
         Classical Machine Learning (like our SVM) is excellent at drawing straight lines through predictable patient data. 
         
         **How it diagnoses:**
@@ -269,7 +269,7 @@ elif page == "🧠 Clinical Explanation":
         
     with col2:
         st.markdown("""
-        ### ⚛️ The Quantum Approach (Next-Gen AI)
+        ### <img src='https://img.icons8.com/ios/50/1E293B/physics.png' width='30' style='vertical-align: middle;'> The Quantum Approach (Next-Gen AI)
         Quantum Machine Learning does not read data like a spreadsheet. It transforms the patient's entire medical history into a physical quantum state (a physical wave).
         
         **How it diagnoses:**
