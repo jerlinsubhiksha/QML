@@ -170,11 +170,18 @@ elif page == "Train New Data":
     
     def stream_output(process, placeholder):
         output_log = ""
+        last_update_time = time.time()
         for line in process.stdout:
             output_log += line
-            # Styled high-contrast terminal box for visibility
-            html_log = f"""<pre style='background-color: #000000 !important; padding: 15px; border-radius: 5px; height: 350px; overflow-y: scroll; white-space: pre-wrap; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);'><span style='color: #00FF00 !important; font-family: "Courier New", Courier, monospace; font-size: 14px; font-weight: bold;'>{output_log}</span></pre>"""
-            placeholder.markdown(html_log, unsafe_allow_html=True)
+            if time.time() - last_update_time > 0.5:
+                # Styled high-contrast terminal box for visibility
+                html_log = f"""<pre style='background-color: #000000 !important; padding: 15px; border-radius: 5px; height: 350px; overflow-y: scroll; white-space: pre-wrap; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);'><span style='color: #00FF00 !important; font-family: "Courier New", Courier, monospace; font-size: 14px; font-weight: bold;'>{output_log}</span></pre>"""
+                placeholder.markdown(html_log, unsafe_allow_html=True)
+                last_update_time = time.time()
+                
+        # Ensure the final log is printed
+        html_log = f"""<pre style='background-color: #000000 !important; padding: 15px; border-radius: 5px; height: 350px; overflow-y: scroll; white-space: pre-wrap; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);'><span style='color: #00FF00 !important; font-family: "Courier New", Courier, monospace; font-size: 14px; font-weight: bold;'>{output_log}</span></pre>"""
+        placeholder.markdown(html_log, unsafe_allow_html=True)
     
     with col1:
         st.markdown("""

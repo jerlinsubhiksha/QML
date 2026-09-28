@@ -26,7 +26,7 @@ from qiskit_machine_learning.algorithms import QSVC
 warnings.filterwarnings("ignore")
 
 RANDOM_STATE = 42
-N_FOLDS = 3 
+N_FOLDS = 2 
 N_QUBITS = 4 
 
 def calculate_metrics(y_true, y_pred, y_score):
@@ -147,10 +147,10 @@ def main():
     X_df = X_df.select_dtypes(include=[np.number])
     X = X_df.to_numpy(dtype=float)
 
-    if len(X) > 100:
+    if len(X) > 50:
         print(f"Dataset has {len(X)} rows. Downsampling to 100 for fast Quantum simulation...")
         rng = np.random.default_rng(RANDOM_STATE)
-        idx = rng.choice(len(X), size=100, replace=False)
+        idx = rng.choice(len(X), size=50, replace=False)
         X = X[idx]
         y = y[idx]
 

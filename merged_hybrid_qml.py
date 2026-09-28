@@ -25,8 +25,8 @@ from qiskit_machine_learning.algorithms import QSVC
 warnings.filterwarnings("ignore")
 
 RANDOM_STATE = 42
-N_SAMPLES = 120
-N_FOLDS = 3 
+N_SAMPLES = 60
+N_FOLDS = 2 
 N_QUBITS = 4 
 
 def generate_dataset():
@@ -127,7 +127,7 @@ def run_classical_model(model, name, X, y):
 
 def run_qsvm(X, y):
     print("\n--- QUANTUM SVM ---")
-    feature_map = PauliFeatureMap(feature_dimension=N_QUBITS, reps=2, paulis=['Z', 'YY'], entanglement="full")
+    feature_map = PauliFeatureMap(feature_dimension=N_QUBITS, reps=1, paulis=['Z', 'YY'], entanglement="linear")
     quantum_kernel = FidelityQuantumKernel(feature_map=feature_map)
     cv = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=RANDOM_STATE)
     fold_results = []

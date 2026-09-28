@@ -26,7 +26,7 @@ from qiskit_machine_learning.algorithms import QSVC
 warnings.filterwarnings("ignore")
 
 RANDOM_STATE = 42
-N_FOLDS = 3
+N_FOLDS = 2
 N_QUBITS = 4
 
 def get_datasets():
@@ -39,7 +39,7 @@ def get_datasets():
     y = data.target
     
     rng = np.random.default_rng(RANDOM_STATE)
-    idx = rng.choice(len(X), size=50, replace=False)
+    idx = rng.choice(len(X), size=40, replace=False)
     X = X[idx]
     y = y[idx]
     
