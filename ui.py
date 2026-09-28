@@ -133,7 +133,7 @@ if page == "Performance Dashboard":
                             st.plotly_chart(fig_q, use_container_width=True)
 
                     st.write("---")
-                    st.markdown("### <img src='https://img.icons8.com/ios/50/1E293B/bar-chart.png' width='30' style='vertical-align: middle;'> Direct Visual Comparison")
+                    st.markdown("### <img src='https://img.icons8.com/ios/50/1E293B/bar-chart.png' width='30' style='vertical-align: middle;'> Direct Visual Comparison", unsafe_allow_html=True)
                     
                     fig = go.Figure()
                     fig.add_trace(go.Bar(x=['Accuracy', 'Sensitivity', 'Precision'],
@@ -265,7 +265,7 @@ elif page == "Clinical Explanation":
         * It attempts to draw a clean, mathematical boundary between "Sick" and "Healthy" patients.
         
         **The Limitation:** It struggles when patient symptoms are highly complex, contradictory, or corrupted by "noise" (e.g., faulty MRI readings).
-        """)
+        """, unsafe_allow_html=True)
         
     with col2:
         st.markdown("""
@@ -278,4 +278,4 @@ elif page == "Clinical Explanation":
         * It measures the "overlap" between a new patient's quantum wave and past patients' quantum waves.
         
         **The Advantage:** Because it looks at data multidimensionally, Quantum AI is theoretically much more resilient to "noisy" or corrupted patient records that would normally confuse standard AI.
-        """)
+        """, unsafe_allow_html=True)
