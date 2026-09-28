@@ -43,7 +43,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1><span class='teal-text'><img src='https://img.icons8.com/ios/50/0D9488/artificial-intelligence.png' width='40' style='vertical-align: middle;'> Quantum AI</span> Medical Diagnostics</h1>", unsafe_allow_html=True)
+st.markdown("<h1><span class='teal-text'>Quantum AI</span> Medical Diagnostics</h1>", unsafe_allow_html=True)
 st.write("A clinical evaluation dashboard comparing Classical Support Vector Machines with next-generation Quantum Machine Learning.")
 st.write("---")
 
@@ -85,7 +85,7 @@ if page == "Performance Dashboard":
                     q_runtime = q_data.get('Runtime', 0)
                     
                     with col1:
-                        st.markdown("<h3 style='text-align: center; color: #1E293B;'><img src='https://img.icons8.com/ios/50/1E293B/microchip.png' width='30' style='vertical-align: middle;'> Classical SVM (Standard)</h3>", unsafe_allow_html=True)
+                        st.markdown("<h3 style='text-align: center; color: #1E293B;'>Classical SVM (Standard)</h3>", unsafe_allow_html=True)
                         st.markdown(f"""
                         <div class="metric-card">
                             <div class="metric-label">Overall Accuracy</div>
@@ -109,7 +109,7 @@ if page == "Performance Dashboard":
                             st.plotly_chart(fig_c, use_container_width=True)
                         
                     with col2:
-                        st.markdown("<h3 style='text-align: center; color: #1E293B;'><img src='https://img.icons8.com/ios/50/1E293B/physics.png' width='30' style='vertical-align: middle;'> Quantum SVM (Next-Gen)</h3>", unsafe_allow_html=True)
+                        st.markdown("<h3 style='text-align: center; color: #1E293B;'>Quantum SVM (Next-Gen)</h3>", unsafe_allow_html=True)
                         st.markdown(f"""
                         <div class="metric-card" style="border-top-color: #0F172A;">
                             <div class="metric-label">Overall Accuracy</div>
@@ -133,7 +133,7 @@ if page == "Performance Dashboard":
                             st.plotly_chart(fig_q, use_container_width=True)
 
                     st.write("---")
-                    st.markdown("### <img src='https://img.icons8.com/ios/50/1E293B/bar-chart.png' width='30' style='vertical-align: middle;'> Direct Visual Comparison", unsafe_allow_html=True)
+                    st.markdown("### Direct Visual Comparison", unsafe_allow_html=True)
                     
                     fig = go.Figure()
                     fig.add_trace(go.Bar(x=['Accuracy', 'Sensitivity', 'Precision'],
@@ -216,6 +216,46 @@ elif page == "Train New Data":
                         st.error("Error running script.")
                 except Exception as e: st.error(f"Error: {e}")
 
+    st.write("---")
+    st.markdown("### Upload Custom Dataset")
+    st.write("Upload a CSV file to evaluate it using the Hybrid Quantum Pipeline. The algorithm will automatically preprocess it.")
+    
+    uploaded_file = st.file_uploader("Upload CSV File", type=["csv"])
+    if uploaded_file is not None:
+        try:
+            df = pd.read_csv(uploaded_file)
+            st.write("Preview of Uploaded Data:")
+            st.dataframe(df.head())
+            
+            col_a, col_b = st.columns(2)
+            with col_a:
+                target_col = st.selectbox("Select Target Column to Predict:", df.columns)
+            with col_b:
+                custom_name = st.text_input("Dataset Name (for Dashboard):", value="Custom: " + uploaded_file.name)
+            
+            if st.button("Train Custom Dataset", type="primary"):
+                df.to_csv("scratch_uploaded.csv", index=False)
+                with st.spinner("Processing custom dataset..."):
+                    try:
+                        output_placeholder = st.empty()
+                        process = subprocess.Popen(["python", "-u", "qml_custom.py", "--data", "scratch_uploaded.csv", "--target", target_col, "--name", custom_name], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+                        output_log = ""
+                        for line in process.stdout:
+                            output_log += line
+                            output_placeholder.code(output_log, language="shell")
+                        process.wait()
+                        if process.returncode == 0:
+                            st.success("Training Complete! Go to the Performance Dashboard to view the results.")
+                            time.sleep(2)
+                            load_results.clear()
+                            st.rerun()
+                        else:
+                            st.error("Error processing dataset.")
+                    except Exception as e:
+                        st.error(f"Error: {e}")
+        except Exception as e:
+            st.error(f"Invalid CSV format: {e}")
+
 # ==========================================
 # PAGE 3: EXPLAINABILITY (SHAP)
 # ==========================================
@@ -256,7 +296,7 @@ elif page == "Clinical Explanation":
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("""
-        ### <img src='https://img.icons8.com/ios/50/1E293B/microchip.png' width='30' style='vertical-align: middle;'> The Classical Approach (Standard AI)
+        ### The Classical Approach (Standard AI)
         Classical Machine Learning (like our SVM) is excellent at drawing straight lines through predictable patient data. 
         
         **How it diagnoses:**
@@ -269,7 +309,7 @@ elif page == "Clinical Explanation":
         
     with col2:
         st.markdown("""
-        ### <img src='https://img.icons8.com/ios/50/1E293B/physics.png' width='30' style='vertical-align: middle;'> The Quantum Approach (Next-Gen AI)
+        ### The Quantum Approach (Next-Gen AI)
         Quantum Machine Learning does not read data like a spreadsheet. It transforms the patient's entire medical history into a physical quantum state (a physical wave).
         
         **How it diagnoses:**
