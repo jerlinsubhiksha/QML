@@ -16,6 +16,7 @@ from sklearn.metrics import (
     precision_score,
     f1_score,
     roc_auc_score,
+    roc_curve,
     confusion_matrix
 )
 from qiskit.circuit.library import PauliFeatureMap
@@ -37,8 +38,12 @@ def calculate_metrics(y_true, y_pred, y_score):
         tn, fp, fn, tp = 0, 0, 0, 0
         specificity = 0.0
 
-    try: auc = roc_auc_score(y_true, y_score)
-    except: auc = 0.0
+    try: 
+        auc = roc_auc_score(y_true, y_score)
+        fpr, tpr, _ = roc_curve(y_true, y_score)
+    except: 
+        auc = 0.0
+        fpr, tpr = [0, 1], [0, 1]
 
     return {
         "accuracy": accuracy_score(y_true, y_pred),
@@ -47,6 +52,8 @@ def calculate_metrics(y_true, y_pred, y_score):
         "precision": precision_score(y_true, y_pred, zero_division=0, average='weighted'),
         "f1": f1_score(y_true, y_pred, zero_division=0, average='weighted'),
         "auc": auc,
+        "fpr": ",".join(map(str, fpr)),
+        "tpr": ",".join(map(str, tpr)),
         "tn": tn,
         "fp": fp,
         "fn": fn,
@@ -166,6 +173,8 @@ def main():
             "Precision": res["precision"].mean(),
             "F1-score": res["f1"].mean(),
             "ROC-AUC": res["auc"].mean(),
+            "FPR": res["fpr"].iloc[-1],
+            "TPR": res["tpr"].iloc[-1],
             "Runtime": res["runtime"].mean(),
             "TN": res["tn"].sum(),
             "FP": res["fp"].sum(),
@@ -183,6 +192,8 @@ def main():
         "Precision": q_res["precision"].mean(),
         "F1-score": q_res["f1"].mean(),
         "ROC-AUC": q_res["auc"].mean(),
+        "FPR": q_res["fpr"].iloc[-1],
+        "TPR": q_res["tpr"].iloc[-1],
         "Runtime": q_res["runtime"].mean(),
         "TN": q_res["tn"].sum(),
         "FP": q_res["fp"].sum(),
