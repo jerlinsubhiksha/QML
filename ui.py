@@ -46,10 +46,14 @@ page = st.sidebar.radio("", options, index=idx, key="radio_key", on_change=on_pa
 
 @st.cache_data
 def load_results():
+    import os
+    if not os.path.exists("master_qml_results.csv"):
+        return None
     try:
-        df = pd.read_csv("master_qml_results.csv")
+        df = pd.read_csv("master_qml_results.csv", on_bad_lines='skip')
+        if len(df) == 0: return None
         return df.drop_duplicates(subset=['Dataset', 'Model'], keep='last')
-    except:
+    except Exception as e:
         return None
 
 results_df = load_results()
