@@ -215,9 +215,9 @@ elif page == "⚙️ Train New Data":
         if st.button("Train Fever Dataset 🚀", use_container_width=True, type="primary"):
             with st.spinner('Initializing Quantum simulation for Fever dataset...'):
                 try:
-                    # Stream output to UI
+                    # Stream output to UI with unbuffered python (-u)
                     output_placeholder = st.empty()
-                    process = subprocess.Popen(["python", "merged_hybrid_qml.py"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+                    process = subprocess.Popen(["python", "-u", "merged_hybrid_qml.py"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
                     output_log = ""
                     for line in process.stdout:
                         output_log += line
@@ -247,9 +247,9 @@ elif page == "⚙️ Train New Data":
         if st.button("Train Breast Cancer Dataset 🚀", use_container_width=True, type="primary"):
             with st.spinner('Simulating complex Quantum entanglement...'):
                 try:
-                    # Stream output to UI
+                    # Stream output to UI with unbuffered python (-u)
                     output_placeholder = st.empty()
-                    process = subprocess.Popen(["python", "qml_breast_cancer.py"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+                    process = subprocess.Popen(["python", "-u", "qml_breast_cancer.py"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
                     output_log = ""
                     for line in process.stdout:
                         output_log += line
