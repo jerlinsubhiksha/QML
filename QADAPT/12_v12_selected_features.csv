@@ -1,0 +1,13 @@
+feature,is_quantum_feature
+EducationLevel,True
+SleepQuality,True
+CardiovascularDisease,True
+SystolicBP,True
+CholesterolHDL,False
+CholesterolTriglycerides,False
+MMSE,False
+FunctionalAssessment,False
+MemoryComplaints,False
+BehavioralProblems,False
+ADL,False
+PersonalityChanges,False
