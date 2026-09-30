@@ -207,8 +207,9 @@ elif st.session_state.step == 2:
         
     # 2. Select KBest
     try:
-        k = min(12, X.shape[1])
-        update_term(f"Running Classical Bottleneck (SelectKBest)... Reducing {X.shape[1]} features down to top {k}.")
+        # We cap features to 4 (4 Qubits) so the local CPU simulator doesn't freeze.
+        k = min(4, X.shape[1])
+        update_term(f"Running Classical Bottleneck (SelectKBest)... Reducing {X.shape[1]} features down to top {k} for 4-Qubit Circuit.")
         X_train += np.random.normal(0, 1e-5, X_train.shape) # Prevent constant feature crash
         selector = SelectKBest(f_classif, k=k).fit(X_train, y_train)
         X_train_c = selector.transform(X_train)
@@ -248,10 +249,10 @@ elif st.session_state.step == 2:
     # Intelligent Subsampling for Quantum (Simulating 1M quantum circuits locally would take years)
     update_term(f"Subsampling for Quantum Execution to prevent simulator bottleneck...")
     
-    # We use a very small subset (50 train, 20 test) specifically for the local CPU simulator 
+    # We use a very small subset (20 train, 10 test) specifically for the local CPU simulator 
     # so that the UI doesn't hang for 15 minutes. In a production cloud cluster, this would scale up.
-    train_size_q = min(50, len(X_tr_sc))
-    test_size_q = min(20, len(X_te_sc))
+    train_size_q = min(20, len(X_tr_sc))
+    test_size_q = min(10, len(X_te_sc))
     
     np.random.seed(42)
     q_train_idx = np.random.choice(len(X_tr_sc), train_size_q, replace=False)
