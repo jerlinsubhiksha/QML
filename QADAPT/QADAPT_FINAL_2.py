@@ -247,8 +247,11 @@ elif st.session_state.step == 2:
     
     # Intelligent Subsampling for Quantum (Simulating 1M quantum circuits locally would take years)
     update_term(f"Subsampling for Quantum Execution to prevent simulator bottleneck...")
-    train_size_q = min(400, len(X_tr_sc))
-    test_size_q = min(100, len(X_te_sc))
+    
+    # We use a very small subset (50 train, 20 test) specifically for the local CPU simulator 
+    # so that the UI doesn't hang for 15 minutes. In a production cloud cluster, this would scale up.
+    train_size_q = min(50, len(X_tr_sc))
+    test_size_q = min(20, len(X_te_sc))
     
     np.random.seed(42)
     q_train_idx = np.random.choice(len(X_tr_sc), train_size_q, replace=False)
